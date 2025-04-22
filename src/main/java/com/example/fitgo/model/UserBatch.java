@@ -21,6 +21,7 @@ public class UserBatch {
     // The primary key for the UserBatch entity. Automatically generated.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_BATCH_ID")
     private Integer id;
 
     // The unique batch ID for the user batch. Automatically generated as a UUID.
@@ -48,6 +49,13 @@ public class UserBatch {
      */
     public UserBatch(Users user) {
         this.user = user;
+    }
+
+    public UserBatch() {
+    }
+
+    public UserBatch(UUID batchId) {
+        this.batchId = batchId;
     }
 
     /**
