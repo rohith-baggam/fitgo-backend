@@ -19,4 +19,9 @@ public class UserBatchService {
         userBatch = repo.save(userBatch);
         return userBatch.getBatchId();
     }
+
+    public UserBatch getUserBatchById(UUID batchId) {
+        return repo.findByBatchId(batchId).orElse(null);
+    }
+
 }
