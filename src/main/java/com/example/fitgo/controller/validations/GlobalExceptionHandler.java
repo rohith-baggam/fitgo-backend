@@ -1,5 +1,6 @@
 package com.example.fitgo.controller.validations;
 
+import com.example.fitgo.controller.response.ErrorResponse;
 import com.example.fitgo.controller.validations.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

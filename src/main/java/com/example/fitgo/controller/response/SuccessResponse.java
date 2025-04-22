@@ -1,19 +1,19 @@
-package com.example.fitgo.controller.validations;
+package com.example.fitgo.controller.response;
 
-public class ErrorResponse {
-    private String message;
+public class SuccessResponse {
+    private Object message;
     private int status;
 
-    public ErrorResponse(String message, int status) {
+    public SuccessResponse(Object message, int status) {
         this.message = message;
         this.status = status;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(Object message) {
         this.message = message;
     }
 

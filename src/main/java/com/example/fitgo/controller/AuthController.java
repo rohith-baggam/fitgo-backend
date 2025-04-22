@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.fitgo.controller.response.SuccessResponse;
 import com.example.fitgo.controller.validations.APIExceptions;
 import com.example.fitgo.controller.validations.UsernameAlreadyExistsException;
 import com.example.fitgo.model.Users;
@@ -17,13 +18,17 @@ public class AuthController {
     private UserService service;
 
     @PostMapping("/login")
-    public String login(@RequestBody Users user) {
+    public SuccessResponse login(@RequestBody Users user) {
         if (!service.usernameExists(user)) {
             throw new UsernameAlreadyExistsException("Username not exists");
         }
         try {
             System.out.println(user.getUsername());
-            return service.verify(user);
+
+            Object message = new Object() {
+                public String token = service.verify(user);
+            };
+            return new SuccessResponse(message, 200);
         } catch (Exception e) {
             throw new APIExceptions(e.getMessage());
         }
