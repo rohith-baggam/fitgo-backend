@@ -24,6 +24,7 @@ public class UserService {
     private JWTService jwtService;
 
     public Users register(Users user) {
+
         return repo.save(user);
     }
 
@@ -37,5 +38,9 @@ public class UserService {
         }
 
         return "failure";
+    }
+
+    public boolean usernameExists(Users user) {
+        return repo.findByUsername(user.getUsername()) != null;
     }
 }

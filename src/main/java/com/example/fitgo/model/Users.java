@@ -1,32 +1,32 @@
 package com.example.fitgo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "users")
 public class Users {
-    @Id
-    private int id;
 
-    @Column(unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
-    public void setId(int id) {
-        this.id = id;
+    // Constructors
+    public Users() {
     }
 
-    public void setUsername(String username) {
+    public Users(String username, String password) {
         this.username = username;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
     }
 
-    public int getId() {
+    // Getters
+    public Integer getId() {
         return id;
     }
 
@@ -36,5 +36,18 @@ public class Users {
 
     public String getPassword() {
         return password;
+    }
+
+    // Setters
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

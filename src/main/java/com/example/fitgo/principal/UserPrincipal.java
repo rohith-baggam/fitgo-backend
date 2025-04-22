@@ -12,7 +12,7 @@ public class UserPrincipal implements UserDetails {
     private Users user;
 
     public UserPrincipal(Users user) {
-
+        this.user = user;
     }
 
     @java.lang.Override
