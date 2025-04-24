@@ -15,46 +15,75 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
+/**
+ * SecurityConfig is a configuration class that sets up the security settings
+ * for the application including JWT, CORS, and session policies.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
     private JwtFilter jwtFilter;
 
+    /**
+     * Main security filter chain configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // this is to disable csrf token
-        http.csrf(customizer -> customizer.disable())
-                // this will make all API's is authenticated
-                .authorizeHttpRequests(
-                        request -> request
-                                .requestMatchers("register", "login")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-
-                // configured in application.properties
+        http
+                .cors(Customizer.withDefaults()) // Enable CORS
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("register", "login", "co-ordinates-batch-api").permitAll()
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(
-                        session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
+    /**
+     * CORS configuration for allowing frontend access.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*")); // Frontend origin
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true); // Needed if you're sending cookies or auth headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    /**
+     * Configure the AuthenticationProvider with BCrypt and custom
+     * UserDetailsService.
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(
-                new BCryptPasswordEncoder(12));
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }
 
+    /**
+     * Configure and expose AuthenticationManager.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
