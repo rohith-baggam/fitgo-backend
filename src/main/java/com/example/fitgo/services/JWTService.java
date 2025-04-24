@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +29,15 @@ import java.util.function.Function;
  */
 @Service
 public class JWTService {
-    private String secretKey = ""; // The secret key used to sign the JWT tokens
+    @Value("${jwt_secret}")
+    private String secretKey; // The secret key used to sign the JWT
+                              // tokens
 
     /**
      * Constructor that generates a new secret key for signing JWT tokens.
      * The key is generated using HMACSHA256 algorithm and is encoded to Base64.
      */
     public JWTService() {
-        try {
-            // Initialize a key generator for HMACSHA256
-            KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            // Generate the key and encode it to Base64
-            SecretKey secretKeyGen = keyGen.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(secretKeyGen.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e); // Rethrow as a runtime exception if key generation fails
-        }
     }
 
     /**
