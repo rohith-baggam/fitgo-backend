@@ -15,94 +15,77 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * SecurityConfig is a configuration class that sets up the security settings
- * for the application.
- * It configures HTTP security, authentication provider, and session management,
- * along with JWT filter setup.
+ * for the application including JWT, CORS, and session policies.
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Autowired
-    private UserDetailsService userDetailsService; // Service to load user details from the database
+    private UserDetailsService userDetailsService;
 
     @Autowired
-    private JwtFilter jwtFilter; // JWT filter to intercept requests and validate JWT tokens
+    private JwtFilter jwtFilter;
 
     /**
-     * Configures HTTP security settings for the application.
-     * - Disables CSRF protection (typically for stateless APIs).
-     * - Configures authorization rules for different endpoints.
-     * - Sets session management policy to stateless, meaning the server doesn't
-     * store session data.
-     * - Adds JWT filter before the UsernamePasswordAuthenticationFilter to validate
-     * JWT in requests.
-     *
-     * @param http The HttpSecurity object to configure security settings.
-     * @return The configured SecurityFilterChain object.
-     * @throws Exception If any error occurs during the configuration.
+     * Main security filter chain configuration.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disable CSRF protection for stateless APIs (not required for JWT-based
-        // authentication)
-        http.csrf(customizer -> customizer.disable())
-
-                // Configure authorization rules: allow public access to register and login,
-                // others require authentication
+        http
+                .cors(Customizer.withDefaults()) // Enable CORS
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("register", "login") // Permit access to registration and login endpoints
-                        .permitAll() // Allow all users to access register and login
-                        .anyRequest() // All other requests must be authenticated
-                        .authenticated())
-
-                // Enable basic authentication (useful for some HTTP clients but optional with
-                // JWT)
+                        .requestMatchers("register", "login", "co-ordinates-batch-api").permitAll()
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-
-                // Set session creation policy to stateless: JWT will be used for
-                // authentication, not sessions
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // Add the JWT filter before UsernamePasswordAuthenticationFilter to validate
-                // the JWT token
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build(); // Return the configured security filter chain
+        return http.build();
     }
 
     /**
-     * Configures the AuthenticationProvider to authenticate users with their
-     * username and password.
-     * - Uses BCryptPasswordEncoder for password encoding.
-     * - Specifies the UserDetailsService to load user data for authentication.
-     *
-     * @return The configured AuthenticationProvider.
+     * CORS configuration for allowing frontend access.
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*")); // Frontend origin
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true); // Needed if you're sending cookies or auth headers
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+    /**
+     * Configure the AuthenticationProvider with BCrypt and custom
+     * UserDetailsService.
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(12)); // Use BCrypt for strong password hashing
-        provider.setUserDetailsService(userDetailsService); // Use the userDetailsService to load user information
+        provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
+        provider.setUserDetailsService(userDetailsService);
         return provider;
     }
 
     /**
-     * Configures the AuthenticationManager, which handles the authentication
-     * process.
-     * This manager is responsible for processing authentication requests.
-     *
-     * @param config The AuthenticationConfiguration object to obtain the
-     *               authentication manager.
-     * @return The configured AuthenticationManager.
-     * @throws Exception If any error occurs while obtaining the
-     *                   AuthenticationManager.
+     * Configure and expose AuthenticationManager.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager(); // Return the authentication manager provided by Spring Security
+        return config.getAuthenticationManager();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.fitgo.services;
 
+import org.hibernate.engine.jdbc.batch.spi.Batch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,7 @@ import com.example.fitgo.model.CoOrdinates;
 import com.example.fitgo.model.UserBatch;
 import com.example.fitgo.repo.CoOrdinatesRepo;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,4 +41,6 @@ public class CoOrdinatesService {
         CoOrdinates newCoords = new CoOrdinates(latitude, longitude, userBatch);
         return repo.save(newCoords);
     }
+    // public List<CoOrdinates> getCoOrdinatesWithBatch()
+
 }
