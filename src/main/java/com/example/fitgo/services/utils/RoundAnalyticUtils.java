@@ -14,8 +14,6 @@ public abstract class RoundAnalyticUtils {
     protected final CoOrdinatesRepo coOrdinatesRepo;
     protected final CoOrdinatePayloadDTO coOrdinatePayloadDTO;
 
-    private double thresholdDistance = 0.5;
-
     public RoundAnalyticUtils(
             CoOrdinatePayloadDTO coOrdinatePayloadDTO,
             CoOrdinatesRepo coOrdinatesRepo) {
@@ -91,9 +89,9 @@ public abstract class RoundAnalyticUtils {
                 startCoOrdinates.getLongitude());
     }
 
-    public boolean isRoundCompleted() {
-        return distanceWithJourneyStartPoint() <= thresholdDistance;
-    }
+    // public boolean isRoundCompleted() {
+    // return distanceWithJourneyStartPoint() <= thresholdDistance;
+    // }
 
     // CoOrdinates lastCoOrdinateInstance = coOrdinate2.get();
     // Optional<CoOrdinates> lastCoOrdinate =
