@@ -1,85 +1,106 @@
 package com.example.fitgo.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-
-/**
- * Entity class representing geographic coordinates associated with a user
- * batch.
- */
 @Entity
 @Table(name = "CO_ORDINATES_TABLE")
 public class CoOrdinates {
 
-    /**
-     * Primary key for the coordinate entry.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    /**
-     * Latitude value of the location.
-     */
     @Column(name = "LATITUDE")
     private double latitude;
 
-    /**
-     * Longitude value of the location.
-     */
     @Column(name = "LONGITUDE")
     private double longitude;
 
-    /**
-     * Reference to the UserBatch that this coordinate is associated with.
-     */
     @ManyToOne
     @JoinColumn(name = "USER_BATCH_ID")
     private UserBatch userBatchId;
 
-    /**
-     * Timestamp indicating when the coordinate entry was created.
-     */
+    @ManyToOne
+    @JoinColumn(name = "LAST_COORDINATE")
+    private CoOrdinates lastCoOrdinate;
+
+    @ManyToOne
+    @JoinColumn(name = "ROUND")
+    private RoundIdTable round;
+
+    @Column(name = "DISTANCE")
+    private Double distance;
+
+    @Column(name = "TIME")
+    private Double time;
+
+    @Column(name = "SPEED")
+    private Double speed;
+
+    @Column(name = "TOTAL_DISTANCE")
+    private Double totalDistance;
+
+    @Column(name = "TOTAL_TIME")
+    private Double totalTime;
+
+    @Column(name = "TOTAL_SPEED")
+    private Double totalSpeed;
+
+    @Column(name = "ROUND_DISTANCE")
+    private Double roundDistance;
+
+    @Column(name = "ROUND_TIME")
+    private Double roundTime;
+
+    @Column(name = "ROUND_SPEED")
+    private Double roundSpeed;
+
+    @Column(name = "IS_START_POINT")
+    private Boolean isStartPoint = false;
+
+    @Column(name = "IS_END_POINT")
+    private Boolean isEndPoint = false;
+
+    @Column(name = "IS_ROUND_START_POINT")
+    private Boolean isRoundStartPoint = false;
+
+    @Column(name = "IS_ROUND_END_POINT")
+    private Boolean isRoundEndPoint = false;
+
+    @Column(name = "EXPECTED_TIME")
+    private Double expectedTime;
+
     @Column(name = "CREATED_DATE", updatable = false)
     private LocalDateTime createdDate;
 
-    /**
-     * Timestamp indicating the last time the coordinate entry was updated.
-     */
     @Column(name = "UPDATED_DATE")
     private LocalDateTime updatedDate;
 
-    /**
-     * Automatically sets the created date before persisting.
-     */
     @PrePersist
     protected void onCreate() {
         this.createdDate = LocalDateTime.now();
     }
 
-    /**
-     * Automatically updates the updated date before any update operation.
-     */
     @PreUpdate
     protected void onUpdate() {
         this.updatedDate = LocalDateTime.now();
     }
 
-    // constructor
-    public CoOrdinates() {
-        this.createdDate = LocalDateTime.now();
-        this.updatedDate = LocalDateTime.now();
-    }
-
-    public CoOrdinates(double latitude, double longitude, UserBatch userBatchId) {
+    // constructors
+    public CoOrdinates(double latitude, double longitude, UserBatch userBatch) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.userBatchId = userBatchId;
-        this.createdDate = LocalDateTime.now();
-        this.updatedDate = LocalDateTime.now();
+        this.userBatchId = userBatch;
     }
 
+    public CoOrdinates(double latitude, double longitude, UserBatch userBatch, boolean isStartPoint,
+            boolean isRoundStartPoint) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.userBatchId = userBatch;
+        this.isStartPoint = isStartPoint;
+    }
     // Getters and Setters
 
     public long getId() {
@@ -112,6 +133,134 @@ public class CoOrdinates {
 
     public void setUserBatchId(UserBatch userBatchId) {
         this.userBatchId = userBatchId;
+    }
+
+    public CoOrdinates getLastCoOrdinate() {
+        return lastCoOrdinate;
+    }
+
+    public void setLastCoOrdinate(CoOrdinates lastCoOrdinate) {
+        this.lastCoOrdinate = lastCoOrdinate;
+    }
+
+    public RoundIdTable getRound() {
+        return round;
+    }
+
+    public void setRound(RoundIdTable round) {
+        this.round = round;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Double getTime() {
+        return time;
+    }
+
+    public void setTime(Double time) {
+        this.time = time;
+    }
+
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
+
+    public Double getTotalDistance() {
+        return totalDistance;
+    }
+
+    public void setTotalDistance(Double totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+
+    public Double getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(Double totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public Double getTotalSpeed() {
+        return totalSpeed;
+    }
+
+    public void setTotalSpeed(Double totalSpeed) {
+        this.totalSpeed = totalSpeed;
+    }
+
+    public Double getRoundDistance() {
+        return roundDistance;
+    }
+
+    public void setRoundDistance(Double roundDistance) {
+        this.roundDistance = roundDistance;
+    }
+
+    public Double getRoundTime() {
+        return roundTime;
+    }
+
+    public void setRoundTime(Double roundTime) {
+        this.roundTime = roundTime;
+    }
+
+    public Double getRoundSpeed() {
+        return roundSpeed;
+    }
+
+    public void setRoundSpeed(Double roundSpeed) {
+        this.roundSpeed = roundSpeed;
+    }
+
+    public Boolean getIsStartPoint() {
+        return isStartPoint;
+    }
+
+    public void setIsStartPoint(Boolean isStartPoint) {
+        this.isStartPoint = isStartPoint;
+    }
+
+    public Boolean getIsEndPoint() {
+        return isEndPoint;
+    }
+
+    public void setIsEndPoint(Boolean isEndPoint) {
+        this.isEndPoint = isEndPoint;
+    }
+
+    public Boolean getIsRoundStartPoint() {
+        return isRoundStartPoint;
+    }
+
+    public void setIsRoundStartPoint(Boolean isRoundStartPoint) {
+        this.isRoundStartPoint = isRoundStartPoint;
+    }
+
+    public Boolean getIsRoundEndPoint() {
+        return isRoundEndPoint;
+    }
+
+    public void setIsRoundEndPoint(Boolean isRoundEndPoint) {
+        this.isRoundEndPoint = isRoundEndPoint;
+    }
+
+    public Double getExpectedTime() {
+        return expectedTime;
+    }
+
+    public void setExpectedTime(Double expectedTime) {
+        this.expectedTime = expectedTime;
     }
 
     public LocalDateTime getCreatedDate() {

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  dev_postgres:
+    image: postgres
+    container_name: fitgo_dev_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: POSTGRES_DEV_DOCKER
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: Abcd.1234
+    ports:
+      - "9052:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/dev_data
+
+volumes:
+  pgdata:
