@@ -8,6 +8,7 @@ public class CoOrdinatePayloadDTO {
     private UserBatch userBatch;
     private double latitude;
     private double longitude;
+    private boolean isEndPoint = false;
 
     public UserBatch getUserBatch() {
         return userBatch;
@@ -31,5 +32,13 @@ public class CoOrdinatePayloadDTO {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public boolean getIsEndPoint() {
+        return isEndPoint;
+    }
+
+    public void setIsEndPoint(boolean isEndPoint) {
+        this.isEndPoint = isEndPoint;
     }
 }

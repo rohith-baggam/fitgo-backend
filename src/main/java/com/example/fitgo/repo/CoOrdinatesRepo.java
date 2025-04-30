@@ -11,6 +11,10 @@ import com.example.fitgo.model.UserBatch;
 public interface CoOrdinatesRepo extends JpaRepository<CoOrdinates, Integer> {
     Optional<CoOrdinates> findTopByUserBatchIdOrderByCreatedDateDesc(UserBatch userBatchId);
 
+    Optional<CoOrdinates> findTopByRoundOrderByCreatedDateDesc(RoundIdTable round);
+
+    Optional<CoOrdinates> findTopByRoundOrderByCreatedDateAsc(RoundIdTable round);
+
     List<CoOrdinates> findByRound(RoundIdTable roundIdTable);
 
     // Corrected method for fetching by RoundIdTable's Id

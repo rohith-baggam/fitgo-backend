@@ -2,6 +2,7 @@ package com.example.fitgo.services.utils;
 
 import com.example.fitgo.repo.CoOrdinatesRepo;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.example.fitgo.dto.CoOrdinatePayloadDTO;
@@ -10,7 +11,7 @@ import com.example.fitgo.model.RoundIdTable;
 import com.example.fitgo.model.UserBatch;
 
 public abstract class RoundAnalyticUtils {
-
+    private double thresholdDistance = 0.5;
     protected final CoOrdinatesRepo coOrdinatesRepo;
     protected final CoOrdinatePayloadDTO coOrdinatePayloadDTO;
 
@@ -37,7 +38,7 @@ public abstract class RoundAnalyticUtils {
         return coOrdinatesRepo.existsByRound(null);
     }
 
-    public double haversinedistanceBetweenToPoint(double lat1, double lon1, double lat2, double lon2) {
+    public double haverseindistanceBetweenToPoint(double lat1, double lon1, double lat2, double lon2) {
         // Radius of the Earth in kilometers
         final int R = 6371;
 
@@ -61,10 +62,10 @@ public abstract class RoundAnalyticUtils {
         return distance; // Distance in kilometers
     }
 
-    public double distanceWithCurrentPoint(
+    public double distanceFromCurrentPoint(
             CoOrdinates coOrdinate) {
 
-        double distance = haversinedistanceBetweenToPoint(
+        double distance = haverseindistanceBetweenToPoint(
                 coOrdinatePayloadDTO.getLatitude(),
                 coOrdinatePayloadDTO.getLongitude(),
                 coOrdinate.getLatitude(),
@@ -82,7 +83,7 @@ public abstract class RoundAnalyticUtils {
         if (startCoOrdinates == null) {
             return 0;
         }
-        return haversinedistanceBetweenToPoint(
+        return haverseindistanceBetweenToPoint(
                 coOrdinatePayloadDTO.getLatitude(),
                 coOrdinatePayloadDTO.getLatitude(),
                 startCoOrdinates.getLatitude(),
@@ -107,12 +108,54 @@ public abstract class RoundAnalyticUtils {
             return 0;
         }
         CoOrdinates lastCoOrdinateInstance = lastCoOrdinate.get();
-        double distance = haversinedistanceBetweenToPoint(
+        double distance = haverseindistanceBetweenToPoint(
                 coOrdinatePayloadDTO.getLatitude(),
                 coOrdinatePayloadDTO.getLongitude(),
                 lastCoOrdinateInstance.getLatitude(),
                 lastCoOrdinateInstance.getLongitude());
         return distance;
+    }
+
+    public double distanceBetweenTwoCoOrdinates(
+            CoOrdinates coOrdinate1,
+            CoOrdinates coOrdinate2) {
+
+        double distance = haverseindistanceBetweenToPoint(
+                coOrdinate1.getLatitude(),
+                coOrdinate1.getLongitude(),
+                coOrdinate2.getLatitude(),
+                coOrdinate2.getLongitude());
+        return distance;
+    }
+
+    public boolean isRoundCompleted(
+            CoOrdinates currentCoOrdinate) {
+        // consider if a person is walking in a park, when person reaches near to his
+    // initial person which is less than threshold point it will be considered as a
+
+        // ** As threshold an approximate distance to increase accuracy, 
+        // 1. We will find distance from startCoOrdinate and current cOOrdiante is less than threshold point or not if yes round is completed
+        
+            
+                RoundIdTable currentRound = currentCoOrdinate.getRound();
+        UserBatch currentBatch = currentCoOrdinate.getUserBatchId();
+        CoOrdinates startCoOrdinate = currentBatch.getFirstCoOrdinate();
+
+        if (distanceBetweenTwoCoOrdinates(
+                currentCoOrdinate,
+                startCoOrdinate) < thresholdDistance) {
+            return true;
+        }
+        // 2. for first and second point there will be a minimal difference in coOrdinate and user will not comes into extact to that thresh hold point every time
+
+        // 3. we calculate distance from each roundStart points where each points are near of main first point with less than threshold difference this increases circle area from first point and pick's quickly when user reaches threshold point 
+        List<CoOrdinates> roundStartPoints = coOrdinatesRepo.findByRound(currentRound);
+        for(roundStartPoint : roundStartPoints) {
+            if(distanceBetweenTwoCoOrdinates(currentCoOrdinate, startCoOrdinate) < thresholdDistance) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public double distanceWithCurrentAndRoundFirstCoOrdinate() {

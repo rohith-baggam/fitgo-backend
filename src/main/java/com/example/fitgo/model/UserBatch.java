@@ -34,6 +34,11 @@ public class UserBatch {
     @JoinColumn(name = "USER_ID", nullable = false)
     private Users user;
 
+    // This is the First CoOrdinate of the joureny
+    @ManyToOne
+    @JoinColumn(name = "FIRST_COORDINATE")
+    private CoOrdinates firstCoOrdinate;
+
     // The timestamp when the batch was created. It is set before persisting.
     @Column(name = "CREATED_DATE", updatable = false)
     private LocalDateTime createdDate;
@@ -166,5 +171,13 @@ public class UserBatch {
      */
     public void setUpdatedDate(LocalDateTime updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public void setFirstCoOrdinate(CoOrdinates firstCoOrdinate) {
+        this.firstCoOrdinate = firstCoOrdinate;
+    }
+
+    public CoOrdinates getFirstCoOrdinate() {
+        return this.firstCoOrdinate;
     }
 }
