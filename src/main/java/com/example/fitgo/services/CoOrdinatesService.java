@@ -26,6 +26,7 @@ public class CoOrdinatesService {
      * @return the saved CoOrdinates object if saved, or null if skipped
      */
     public CoOrdinates saveIfNotDuplicate(double latitude, double longitude, UserBatch userBatch) {
+
         Optional<CoOrdinates> last = repo.findTopByUserBatchIdOrderByCreatedDateDesc(userBatch);
 
         if (last.isPresent()) {
@@ -33,14 +34,18 @@ public class CoOrdinatesService {
             if (Double.compare(lastCoords.getLatitude(), latitude) == 0 &&
                     Double.compare(lastCoords.getLongitude(), longitude) == 0) {
                 // Same coordinates found, skip saving
+                System.out.println(3);
                 return null;
             }
         }
 
         // Coordinates are new, save them
-        CoOrdinates newCoords = new CoOrdinates(latitude, longitude, userBatch);
+        CoOrdinates newCoords = new CoOrdinates(
+                latitude,
+                longitude,
+                userBatch);
+        System.out.println("New CoOrdinate added " + newCoords.getId());
         return repo.save(newCoords);
-    }
-    // public List<CoOrdinates> getCoOrdinatesWithBatch()
 
+    }
 }

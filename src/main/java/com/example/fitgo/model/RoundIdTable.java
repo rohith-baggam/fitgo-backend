@@ -37,6 +37,11 @@ public class RoundIdTable {
     @Column(name = "THREASHOLD")
     private Double threashold;
 
+    // default constructor
+    public RoundIdTable() {
+
+    }
+
     // Constructor
     public RoundIdTable(UserBatch userBatch, CoOrdinates roundStartCoOrdinate, int roundNumber) {
         this.batchId = userBatch;

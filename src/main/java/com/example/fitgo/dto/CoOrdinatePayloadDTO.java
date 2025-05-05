@@ -1,21 +1,23 @@
 package com.example.fitgo.dto;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
-import com.example.fitgo.model.UserBatch;
 
 @Component
 public class CoOrdinatePayloadDTO {
-    private UserBatch userBatch;
+    private UUID batchId;
     private double latitude;
     private double longitude;
-    private boolean isEndPoint = false;
+    private boolean isEndPoint;
+    private boolean isStartPoint;
 
-    public UserBatch getUserBatch() {
-        return userBatch;
+    public UUID getBatchId() {
+        return batchId;
     }
 
-    public void setUserBatch(UserBatch userBatch) {
-        this.userBatch = userBatch;
+    public void setBatchId(UUID batchId) {
+        this.batchId = batchId;
     }
 
     public double getLatitude() {
@@ -41,4 +43,13 @@ public class CoOrdinatePayloadDTO {
     public void setIsEndPoint(boolean isEndPoint) {
         this.isEndPoint = isEndPoint;
     }
+
+    public void setIsStartPoint(boolean isStartPoint) {
+        this.isStartPoint = isStartPoint;
+    }
+
+    public boolean getIsStartPoint() {
+        return this.isStartPoint;
+    }
+
 }

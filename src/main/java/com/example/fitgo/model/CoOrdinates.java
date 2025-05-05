@@ -40,40 +40,40 @@ public class CoOrdinates {
 
     // distance between 2 steps
     @Column(name = "DISTANCE")
-    private Double distance;
+    private Double distance = 0.0;
 
     // time taken by distance
     @Column(name = "TIME")
-    private Double time;
+    private Double time = 0.0;
 
     // distance covered in unit of time
     @Column(name = "SPEED")
-    private Double speed;
+    private Double speed = 0.0;
 
     // this is the entire joureny. If a person started walking till he start stops
     // walking this calculates distance from starting point to here
 
     @Column(name = "TOTAL_DISTANCE")
-    private Double totalDistance;
+    private Double totalDistance = 0.0;
 
     @Column(name = "TOTAL_TIME")
-    private Double totalTime;
+    private Double totalTime = 0.0;
 
     @Column(name = "TOTAL_SPEED")
-    private Double totalSpeed;
+    private Double totalSpeed = 0.0;
 
     // consider if a person is walking in a park, when person reaches near to his
     // initial person which is less than threshold point it will be considered as a
     // round & this will store distance from round point from round start point
 
     @Column(name = "ROUND_DISTANCE")
-    private Double roundDistance;
+    private Double roundDistance = 0.0;
 
     @Column(name = "ROUND_TIME")
-    private Double roundTime;
+    private Double roundTime = 0.0;
 
     @Column(name = "ROUND_SPEED")
-    private Double roundSpeed;
+    private Double roundSpeed = 0.0;
 
     // when user clicks on start or first point of a UserBatch is considered as
     // first step or coOrdinate
@@ -114,14 +114,18 @@ public class CoOrdinates {
         this.updatedDate = LocalDateTime.now();
     }
 
+    public CoOrdinates() {
+    }
+
     // constructors
     public CoOrdinates(
             double latitude,
             double longitude,
-            UserBatch userBatch) {
+            UserBatch userBatchId) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.userBatchId = userBatch;
+        this.userBatchId = userBatchId;
+        this.createdDate = LocalDateTime.now(); // optional if you're using @PrePersist
     }
 
     public CoOrdinates(
